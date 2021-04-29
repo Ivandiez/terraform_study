@@ -3,7 +3,10 @@ provider "aws" {
 }
 
 module "webserver_cluster" {
-  source = "../../../modules/services/webserver-cluster"
+  # source = "../../../modules/services/webserver-cluster"
+  # SSH: git@github.com:<OWNER>/<REPO>.git//<PATH>?ref=<VERSION>
+  source = "git@github.com:Ivandiez/tf-modules-repo.git//services/webserver-cluster?ref=v0.0.1"
+  # source = "github.com/Ivandiez/tf-modules-repo//services/webserver-cluster?ref=v0.0.1"  
 
   cluster_name           = var.cluster_name #"webservers-stage"
   db_remote_state_bucket = var.db_remote_state_bucket  #"us-east-2-ivandock-el"
