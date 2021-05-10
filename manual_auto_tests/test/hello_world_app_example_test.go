@@ -10,13 +10,18 @@ import (
   "testing"
 )
 
-func TestAlbExample(t *testing.T) {
+func TestHelloWorldExample(t *testing.T) {
   t.Parallel()
+
   opts := &terraform.Options{
-    TerraformDir: "/home/ivan/study_terraform/up_first_aws_server/manual_auto_tests/examples/alb",
+    TerraformDir: "../examples/hello-world-app/standalone",
 
     Vars: map[string]interface{}{
-      "alb_name": fmt.Sprintf("test-%s", random.UniqueId()),
+      "mysql_config": map[string]interface{}{
+          "address": "mock-value-for-test",
+          "port": 3306,
+      },
+      "environment": fmt.Sprintf("test-%s", random.UniqueId()),
     },
   }
 
@@ -30,20 +35,17 @@ func TestAlbExample(t *testing.T) {
   albDnsName := terraform.OutputRequired(t, opts, "alb_dns_name")
   url := fmt.Sprintf("http://%s", strings.Trim(albDnsName, "\""))
 
-  // Test that the ALB's default action is working and returns a 404
-
-  expectedStatus := 404
-  expectedBody := "404: page not found"
-
   maxRetries := 10
   timeBetweenRetries := 10 * time.Second
 
-  http_helper.HttpGetWithRetry(
+  http_helper.HttpGetWithRetryWithCustomValidation(
           t,
           url,
-          expectedStatus,
-          expectedBody,
           maxRetries,
           timeBetweenRetries,
+          func(status int, body string) bool {
+              return status == 200 &&
+                  strings.Contains(body, "Hello, World")
+          },
   )
 }

@@ -1,5 +1,5 @@
 require 'webrick'
-
+require 'net/http'
 
 class Handlers
   def handle(path)
@@ -8,6 +8,11 @@ class Handlers
       [200, 'text/plain', 'Hello, World']
     when "/api"
       [201, 'application/json', '{"foo":"bar"}']
+    when "/web-service"
+      # New endpoint that calls a web service
+      uri = URI("http://www.example.org")
+      response = Net::HTTP.get_response(uri)
+      [response.code.to_i, response['Content-Type'], response.body]
     else
       [404, 'text/plain', 'Not Found']
     end

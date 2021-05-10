@@ -21,11 +21,13 @@ variable "enable_autoscaling" {
 variable "db_remote_state_bucket" {
   description = "The name of the S3 bucket used for the database's remote state storage"
   type        = string
+  default     = null
 }
 
 variable "db_remote_state_key" {
   description = "The name of the key in the S3 bucket used for the database's remote state storage"
   type        = string
+  default     = null
 }
 
 variable "ami" {
@@ -56,4 +58,25 @@ variable "custom_tags" {
   description = "Custom tags to set on the Instances in the ASG"
   type        = map(string)
   default     = {}
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC to deploy into"
+  type        = string
+  default     = null
+}
+
+variable "subnet_ids" {
+  description = "The IDs of the subnets to deploy into"
+  type        = list(string)
+  default     = null
+}
+
+variable "mysql_config" {
+  description = "The config of the MySQL DB"
+  type        = object ({
+    address = string
+    port    = number
+  })
+  default     = null
 }
